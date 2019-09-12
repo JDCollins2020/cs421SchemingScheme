@@ -13,7 +13,7 @@ public class TokenStream {
 	}
 	//remove return, instead update current stream
 	//every nextline sets streamNdx to 0;
-	public void nextLine() {
+	public boolean nextLine() {
 		String line = "";
 		streamNdx = 0;
 		try {
@@ -22,12 +22,12 @@ public class TokenStream {
 			e.printStackTrace();
 		}
 		if(line == null) {
-			System.out.println("null");
 			currentStream = null;
+			return false;
 		}
 		else {
-			System.out.println(line);
 			currentStream = tokenize(line);
+			return true;
 		}
 	}
 	
