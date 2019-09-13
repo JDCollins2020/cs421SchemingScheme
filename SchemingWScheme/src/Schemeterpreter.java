@@ -16,23 +16,21 @@ public class Schemeterpreter {
 		}
 		
 		if( (c = ts.peek(0).charAt(0)) == '(') {
-			if((c = ts.peek(1).charAt(0)) == '<' || c == '^' || c == '/' || c == '!' || c == '@') {
-				//System.out.println("peek(0) before step(2) = "+ts.peek(0));
+			c = ts.peek(1).charAt(0);
+			if( Operations.isTwoArgOp(c) ) {
 				ts.step(2);
-				//System.out.println("peek(0) after step(2)= "+ts.peek(0));
-				String E1 =  evaluate(ts);
-				//System.out.println("peek(0) after eval E1= "+ts.peek(0));
-				//System.out.println(E1);
-				String E2 = evaluate(ts);
-				//System.out.println("peek(0) = "+ts.peek(0));
-				//System.out.println(E2);
-				return E1 + E2;
+				return Operations.perform(c,evaluate(ts),evaluate(ts));
+			}
+			else if(Operations.isOneArgOp(c)) {
+				ts.step(2);
+				return Operations.perform(c,evaluate(ts));
 			}
 		}
 		else {
 			if(c == '0' || c == '1') {
+				String ret = ts.peek(0);
 				ts.step(1);
-				return c+"";
+				return ret;
 			}
 			if(ts.peek(0).compareTo("undefined") == 0) {
 				//ts.step(1);
