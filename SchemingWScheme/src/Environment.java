@@ -7,11 +7,6 @@ public class Environment extends HashMap<Character,String> {
 		parent = null;
 	}
 	public void initEnv(TokenStream ts, Schemeterpreter s) {
-		Environment temp = this;
-		//if(!this.isEmpty()) {
-		//	Environment temp = new Environment();
-		//	temp.parent = this;
-		//}
 		
 	}
 	public String evaluate(char c) {

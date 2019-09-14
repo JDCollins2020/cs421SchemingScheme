@@ -34,14 +34,14 @@ public class Schemeterpreter {
 					ts.step(2);
 					//System.out.println(ts.peek(-2).charAt(0));
 					env.put(ts.peek(-1).charAt(0),evaluate());
+					//System.out.println(ts.peek(-2)+" --> "+env.get(ts.peek(-2).charAt(0)));
 					ts.step(1);
 				}
 				//System.out.println("a --> "+env.get('a'));
-				//System.out.println("b --> "+env.get('b'));
-				//System.out.println("c --> "+env.get('c'));
-				//System.out.println("d --> "+env.get('d'));
 				ts.step(1);
-				return evaluate();
+				String ret = evaluate();
+				env.clear();
+				return ret;
 			}
 		}
 		else {
