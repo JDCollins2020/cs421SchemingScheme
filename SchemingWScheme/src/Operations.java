@@ -1,7 +1,9 @@
 
 public class Operations {
 	static public String perform(char c, String E1, String E2) {
-		
+		if( E1.compareTo("undefined") == 0 || E2.compareTo("undefined") == 0) {
+			return "undefined";
+		}
 		switch(c) {
 			case '<':{
 				return E1 + E2;
@@ -25,7 +27,7 @@ public class Operations {
 	}
 	
 	public static String perform(char c,String E1) {
-		return perform(c,E1,null);
+		return perform(c,E1,"");
 	}
 	
 	public static boolean isTwoArgOp(char c) {
@@ -34,15 +36,18 @@ public class Operations {
 		}
 		return false;
 	}
+	
 	public static boolean isOneArgOp(char c) {
 		if(c == '!' || c == '@') {
 			return true;
 		}
 		return false;
 	}
+	
 	private static String xor(String E1,String E2) {
 		return zPad( ""+(Integer.parseInt(E1)^Integer.parseInt(E2)),E1,E2);
 	}
+	
 	private static String zip(String E1,String E2){
 		String zipped = "";
 		for(int ndx = 0; ndx < E2.length(); ndx++) {

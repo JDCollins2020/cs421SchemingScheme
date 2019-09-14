@@ -1,49 +1,62 @@
 
 public class Schemeterpreter {
+	static TokenStream ts;
+	static Environment env;
 	public static void main(String args[]) {
-		TokenStream ts = new TokenStream(args[0]);
+		ts = new TokenStream(args[0]);
+		env = new Environment();
 		while(ts.nextStream()) {
 			ts.printAll();
 			System.out.print("---->");
-			System.out.println(evaluate(ts));
+			System.out.println(evaluate());
 		}
 	}
 
-	private static String evaluate(TokenStream ts) {
+	private static String evaluate() {
 		char c;
-		while(ts.peek(0).charAt(0) == ')') {
-			ts.step(1);
-		}
-		
 		if( (c = ts.peek(0).charAt(0)) == '(') {
 			c = ts.peek(1).charAt(0);
 			if( Operations.isTwoArgOp(c) ) {
 				ts.step(2);
-				return Operations.perform(c,evaluate(ts),evaluate(ts));
+				//System.out.println(ts.peek(0)+" "+ts.peek(1));
+				return Operations.perform(c,evaluate(),evaluate());
 			}
 			else if(Operations.isOneArgOp(c)) {
 				ts.step(2);
-				return Operations.perform(c,evaluate(ts));
+				return Operations.perform(c,evaluate());
+			}
+			else { // is an env
+				ts.step(2);
+				while(ts.peek(0).charAt(0) != ')') {
+					//System.out.print(ts.peek(0));
+					//System.out.print(ts.peek(1));
+					//System.out.print(ts.step(2));
+					ts.step(2);
+					//System.out.println(ts.peek(-2).charAt(0));
+					env.put(ts.peek(-1).charAt(0),evaluate());
+					ts.step(1);
+				}
+				//System.out.println("a --> "+env.get('a'));
+				//System.out.println("b --> "+env.get('b'));
+				//System.out.println("c --> "+env.get('c'));
+				//System.out.println("d --> "+env.get('d'));
+				ts.step(1);
+				return evaluate();
 			}
 		}
 		else {
-			if(c == '0' || c == '1') {
-				String ret = ts.peek(0);
+			if(c == '0' || c == '1' || ts.peek(0).compareTo("undefined") == 0) {
 				ts.step(1);
-				return ret;
-			}
-			if(ts.peek(0).compareTo("undefined") == 0) {
-				//ts.step(1);
-				return ts.peek(0);
+				return ts.peek(-1);
 			}
 			if((c >= 'a' && c <= 'z')) {
 				ts.step(1);
-				return ""+c;
+				return env.evaluate(c);
 			}
 		}
 
-		
-		return "";
+		ts.step(1);
+		return evaluate();
 	}
 	
 }

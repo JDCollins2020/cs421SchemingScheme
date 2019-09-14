@@ -4,7 +4,7 @@ public class TokenStream {
 	private BufferedReader fBuffer = null;
 	private String[] currentStream = null;
 	private int streamNdx = -1;
-	//
+	
 	public TokenStream(String fileName) {
 		try {
 			fBuffer = new BufferedReader(new FileReader(fileName));
@@ -12,7 +12,7 @@ public class TokenStream {
 			e.printStackTrace();
 		}
 	}
-	//
+
 	public boolean nextStream() {
 		String line = "";
 		streamNdx = 0;
@@ -30,28 +30,29 @@ public class TokenStream {
 			return true;
 		}
 	}
-	//
+	
 	private String[] tokenize(String line) {
 		String[] tokens = line.trim().split("\\s+");
 		return tokens;
 	}
-	//
-	public String step(int size) {
-		streamNdx += size;
-		return this.currentStream[streamNdx];
+	
+	public void step(int size) {
+		if(streamNdx + size < currentStream.length) {
+			streamNdx += size;
+		}
 	}
-	//
+
 	public String peek(int ndx) {
-		if(ndx >= 0 && ndx < this.currentStream.length) {
+		if(ndx+streamNdx >= 0 && ndx+streamNdx < this.currentStream.length) {
 			return this.currentStream[ndx+streamNdx];
 		}
-		return "";
+		return this.currentStream[streamNdx];
 	}
-	//
+	
 	public int getNdx() {
 		return streamNdx;
 	}
-	//delete
+	
 	public void printAll() {
 		if(currentStream != null) {
 			for(int ndx = 0; ndx < currentStream.length; ndx++) {
