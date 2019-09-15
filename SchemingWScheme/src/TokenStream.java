@@ -53,12 +53,13 @@ public class TokenStream {
 		return streamNdx;
 	}
 	
-	public void printAll() {
+	public void print(String append) {
 		if(currentStream != null) {
 			for(int ndx = 0; ndx < currentStream.length; ndx++) {
 				System.out.print(currentStream[ndx]+ " ");
 			}
 		}
+		System.out.print(append);
 		
 	}
 	

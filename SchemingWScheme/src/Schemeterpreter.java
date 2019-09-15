@@ -4,10 +4,8 @@ public class Schemeterpreter {
 	static Environment env;
 	public static void main(String args[]) {
 		ts = new TokenStream(args[0]);
-		env = new Environment();
 		while(ts.nextStream()) {
-			ts.printAll();
-			System.out.print("---->");
+			//ts.print("---->");
 			System.out.println(evaluate());
 		}
 	}
@@ -16,31 +14,37 @@ public class Schemeterpreter {
 		char c;
 		if( (c = ts.peek(0).charAt(0)) == '(') {
 			c = ts.peek(1).charAt(0);
+			ts.step(2);
 			if( Operations.isTwoArgOp(c) ) {
-				ts.step(2);
-				//System.out.println(ts.peek(0)+" "+ts.peek(1));
 				return Operations.perform(c,evaluate(),evaluate());
 			}
 			else if(Operations.isOneArgOp(c)) {
-				ts.step(2);
 				return Operations.perform(c,evaluate());
 			}
 			else { // is an env
-				ts.step(2);
+				//always have main env available
+				// or redeclare/add 
+				if(env == null || env.isEmpty()) {
+					//System.out.println("\nmake a new env");
+					env = new Environment();
+				}
+				else {
+					//System.out.println("\nmake a child env");
+					Environment temp = new Environment();
+					temp.setParent(env);
+					env = temp;
+				}
 				while(ts.peek(0).charAt(0) != ')') {
-					//System.out.print(ts.peek(0));
-					//System.out.print(ts.peek(1));
-					//System.out.print(ts.step(2));
 					ts.step(2);
-					//System.out.println(ts.peek(-2).charAt(0));
 					env.put(ts.peek(-1).charAt(0),evaluate());
 					//System.out.println(ts.peek(-2)+" --> "+env.get(ts.peek(-2).charAt(0)));
 					ts.step(1);
 				}
-				//System.out.println("a --> "+env.get('a'));
 				ts.step(1);
 				String ret = evaluate();
+				//System.out.println("------");
 				env.clear();
+				env = env.getParent();
 				return ret;
 			}
 		}
@@ -51,7 +55,10 @@ public class Schemeterpreter {
 			}
 			if((c >= 'a' && c <= 'z')) {
 				ts.step(1);
-				return env.evaluate(c);
+				if(env != null) {
+					return env.evaluate(c);
+				}
+				return "undefined";
 			}
 		}
 
