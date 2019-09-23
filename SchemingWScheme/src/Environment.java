@@ -1,16 +1,13 @@
 import java.util.HashMap;
 
 public class Environment extends HashMap<Character,String> {
+	private static final long serialVersionUID = 1L;
 	private Environment parent;
-	public void Environment() {
-		//super is implicitly added
-		parent = null;
-	}
-	public void initEnv(TokenStream ts, Schemeterpreter s) {
-		
+	public Environment() {
+		super();
+		this.parent = null;
 	}
 	public String evaluate(char c) {
-		//System.out.println(c);
 		String ret = this.get(c);
 		if(ret == null) {
 			return "undefined";
@@ -19,11 +16,9 @@ public class Environment extends HashMap<Character,String> {
 	}
 	public String get(char c) {
 		String got = super.get(c);
-		//System.out.println("got("+c+") = " + got);
 		if(this.parent != null && got == null) {
 			return this.parent.get(c);
 		}
-
 		return got;
 	}
 	public void setParent(Environment e) {

@@ -2,68 +2,98 @@
 public class Schemeterpreter {
 	static TokenStream ts;
 	static Environment env;
+	
 	public static void main(String args[]) {
 		ts = new TokenStream(args[0]);
 		while(ts.nextStream()) {
-			//ts.print("---->");
+			ts.print("---->");
 			System.out.println(evaluate());
 		}
 	}
-
 	private static String evaluate() {
 		char c;
 		if( (c = ts.peek(0).charAt(0)) == '(') {
 			c = ts.peek(1).charAt(0);
 			ts.step(2);
 			if( Operations.isTwoArgOp(c) ) {
-				return Operations.perform(c,evaluate(),evaluate());
+				return twoArgOp(c);
 			}
 			else if(Operations.isOneArgOp(c)) {
-				return Operations.perform(c,evaluate());
+				return oneArgOp(c);
 			}
-			else { // is an env
-				//always have main env available
-				// or redeclare/add 
-				if(env == null || env.isEmpty()) {
-					//System.out.println("\nmake a new env");
-					env = new Environment();
-				}
-				else {
-					//System.out.println("\nmake a child env");
-					Environment temp = new Environment();
-					temp.setParent(env);
-					env = temp;
-				}
-				while(ts.peek(0).charAt(0) != ')') {
-					ts.step(2);
-					env.put(ts.peek(-1).charAt(0),evaluate());
-					//System.out.println(ts.peek(-2)+" --> "+env.get(ts.peek(-2).charAt(0)));
-					ts.step(1);
-				}
-				ts.step(1);
-				String ret = evaluate();
-				//System.out.println("------");
-				env.clear();
-				env = env.getParent();
-				return ret;
+			else { 
+				initEnvironment();
+				evalDecl();
+				return evalEnvExp();
 			}
 		}
 		else {
-			if(c == '0' || c == '1' || ts.peek(0).compareTo("undefined") == 0) {
-				ts.step(1);
+			if(isLiteral(c)) {
 				return ts.peek(-1);
 			}
-			if((c >= 'a' && c <= 'z')) {
-				ts.step(1);
+			if(isId(c)) {
 				if(env != null) {
 					return env.evaluate(c);
 				}
 				return "undefined";
 			}
 		}
-
 		ts.step(1);
 		return evaluate();
 	}
-	
+	private static boolean isLiteral(char c) {
+		if(c == '0' || c == '1' || ts.peek(0).compareTo("undefined") == 0) {
+			ts.step(1);
+			return true;
+		}
+		return false;
+	}
+	private static boolean isId(char c) {
+		if((c >= 'a' && c <= 'z')) {
+			ts.step(1);
+			return true;
+		}
+		return false;
+	}
+	private static String twoArgOp(char c) {
+		String str = Operations.perform(c,evaluate(),evaluate());
+		//System.out.println(c+" close two arg op ---> "+str);
+		ts.step(1);
+		return str;
+	}
+	private static String oneArgOp(char c) {
+		String str = Operations.perform(c,evaluate());
+		//System.out.println(c+" close one arg op ---> "+str);
+		ts.step(1);
+		return str;
+	}
+	private static void initEnvironment() {
+		if(env == null ) {
+			env = new Environment();
+		}
+		else {
+			Environment temp = new Environment();
+			temp.setParent(env);
+			env = temp;
+		}
+	}
+	private static void evalDecl() {
+		while(ts.peek(0).charAt(0) == '(' && ts.peek(1).charAt(0) >= 'a' && ts.peek(1).charAt(0) <= 'z') {
+			ts.step(2);
+			//String str = ts.peek(-1);
+			env.put(ts.peek(-1).charAt(0),evaluate());
+			//System.out.println(str+" --> "+env.get(str.charAt(0)) );
+			ts.step(1);
+			while(ts.peek(0).charAt(0) == ')') {
+				ts.step(1);
+			}
+		}
+	}
+	private static String evalEnvExp() {
+		String ret = evaluate();
+		env.clear();
+		env = env.getParent();
+		ts.step(1);
+		return ret;
+	}
 }

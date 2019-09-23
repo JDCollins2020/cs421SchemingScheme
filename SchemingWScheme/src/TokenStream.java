@@ -7,62 +7,49 @@ public class TokenStream {
 	
 	public TokenStream(String fileName) {
 		try {
-			fBuffer = new BufferedReader(new FileReader(fileName));
+			this.fBuffer = new BufferedReader(new FileReader(fileName));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-
 	public boolean nextStream() {
 		String line = "";
-		streamNdx = 0;
+		this.streamNdx = 0;
 		try {
-			line = fBuffer.readLine();
+			line = this.fBuffer.readLine();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		if(line == null) {
-			currentStream = null;
+			this.currentStream = null;
 			return false;
 		}
 		else {
-			currentStream = tokenize(line);
+			this.currentStream = tokenize(line);
 			return true;
 		}
 	}
-	
-	private String[] tokenize(String line) {
+	private static String[] tokenize(String line) {
 		String[] tokens = line.trim().split("\\s+");
 		return tokens;
 	}
-	
 	public void step(int size) {
-		if(streamNdx + size < currentStream.length) {
-			streamNdx += size;
+		if(this.streamNdx + size < this.currentStream.length) {
+			this.streamNdx += size;
 		}
 	}
-
 	public String peek(int ndx) {
-		if(ndx+streamNdx >= 0 && ndx+streamNdx < this.currentStream.length) {
-			return this.currentStream[ndx+streamNdx];
+		if(ndx+this.streamNdx >= 0 && ndx+this.streamNdx < this.currentStream.length) {
+			return this.currentStream[ndx+this.streamNdx];
 		}
-		return this.currentStream[streamNdx];
+		return this.currentStream[this.streamNdx];
 	}
-	
-	public int getNdx() {
-		return streamNdx;
-	}
-	
 	public void print(String append) {
-		if(currentStream != null) {
-			for(int ndx = 0; ndx < currentStream.length; ndx++) {
-				System.out.print(currentStream[ndx]+ " ");
+		if(this.currentStream != null) {
+			for(int ndx = 0; ndx < this.currentStream.length; ndx++) {
+				System.out.print(this.currentStream[ndx]+ " ");
 			}
 		}
 		System.out.print(append);
-		
 	}
-	
-	
-	
 }
