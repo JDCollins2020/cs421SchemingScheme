@@ -6,7 +6,7 @@ public class Schemeterpreter {
 	public static void main(String args[]) {
 		ts = new TokenStream(args[0]);
 		while(ts.nextStream()) {
-			ts.print("---->");
+		    //			ts.print("---->");
 			System.out.println(evaluate());
 		}
 	}
