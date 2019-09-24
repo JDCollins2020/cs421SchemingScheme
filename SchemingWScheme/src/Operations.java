@@ -1,6 +1,4 @@
-
 public class Operations {
-	
 	static public String perform(char c, String E1, String E2) {
 		if( E1.compareTo("undefined") == 0 || E2.compareTo("undefined") == 0) {
 			return "undefined";

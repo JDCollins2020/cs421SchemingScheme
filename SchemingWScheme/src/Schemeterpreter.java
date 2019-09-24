@@ -1,4 +1,3 @@
-
 public class Schemeterpreter {
 	static TokenStream ts;
 	static Environment env;
@@ -67,7 +66,7 @@ public class Schemeterpreter {
 		ts.step(1);
 		return str;
 	}
-	private static void initEnvironment() {
+	/*private static void initEnvironment() {
 		if(env == null ) {
 			env = new Environment();
 		}
@@ -76,7 +75,7 @@ public class Schemeterpreter {
 			temp.setParent(env);
 			env = temp;
 		}
-	}
+	}*/
 	private static void evalDecl() {
 	    Environment temp = new Environment();
 	    while(ts.peek(0).charAt(0) == '(' && ts.peek(1).charAt(0) >= 'a' && ts.peek(1).charAt(0) <= 'z') {
@@ -90,15 +89,13 @@ public class Schemeterpreter {
 				ts.step(1);
 			}
 		}
-	    
-	      if(env == null ) {
-			env = temp;
-		}
-		else {
-			temp.setParent(env);
-			env = temp;
-		}
-	     
+	    if(env == null ) {
+	    	env = temp;
+	    }
+	    else {
+	    	temp.setParent(env);
+	    	env = temp;
+	    }    
 	}
 	private static String evalEnvExp() {
 		String ret = evaluate();
